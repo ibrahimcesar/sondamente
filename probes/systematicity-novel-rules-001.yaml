@@ -1,0 +1,57 @@
+# A behavioral probe of systematicity: does rule-following survive changes
+# that preserve the rules' structure but not their surface form?
+spec_version: "0.1"
+id: systematicity-novel-rules-001
+title: Systematic generalization over novel rule systems
+
+claim:
+  statement: >
+    Systematicity: a system able to process some representations is thereby
+    able to process others with the same constituent structure. Applied here,
+    a system that grasps a rule system should apply it equally well when the
+    symbols expressing it are replaced or its premises are reordered.
+  sources:
+    - "Fodor, J. A., & Pylyshyn, Z. W. (1988). Connectionism and cognitive architecture: A critical analysis. Cognition, 28(1-2), 3-71."
+
+tier: behavioral
+
+hypotheses:
+  - id: systematic
+    description: >
+      The model represents the rules' structure, so accuracy is invariant
+      under structure-preserving changes.
+    predictions:
+      - { condition: baseline, metric: accuracy, expect: { above: 0.6 } }
+      - { condition: renamed_symbols, metric: accuracy_delta, expect: { within: [-0.05, 0.05] } }
+      - { condition: shuffled_premises, metric: accuracy_delta, expect: { within: [-0.05, 0.05] } }
+
+  - id: surface_statistics
+    description: >
+      Performance rides on surface regularities of familiar symbols and
+      premise orders, so structure-preserving changes degrade accuracy.
+    predictions:
+      - { condition: baseline, metric: accuracy, expect: { above: 0.6 } }
+      - { condition: renamed_symbols, metric: accuracy_delta, expect: { below: -0.10 } }
+      - { condition: shuffled_premises, metric: accuracy_delta, expect: { below: -0.10 } }
+
+conditions:
+  - id: baseline
+    description: Rule systems stated with conventional symbols, premises in canonical order.
+    baseline: true
+  - id: renamed_symbols
+    description: Every symbol replaced by a fresh nonsense token; structure unchanged.
+  - id: shuffled_premises
+    description: Premises presented in random order; content unchanged.
+
+metrics:
+  - id: accuracy
+    description: Proportion of instances answered correctly.
+  - id: accuracy_delta
+    description: Accuracy under the condition minus accuracy under the baseline.
+
+generator:
+  path: generators/novel_rule_systems.py
+
+sampling:
+  n_per_condition: 200
+
